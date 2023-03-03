@@ -23,7 +23,7 @@
 
 ;;
 ;; -- TODO: Tell the assembler how to write the target output
-''    -------------------------------------------------------
+;;    -------------------------------------------------------
 ;;.output         "eeprom-msb.bin"    ROM[15:8]
 ;;.output         "eeprom-lsb.bin"    ROM[7:0]
 
