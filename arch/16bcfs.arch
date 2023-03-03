@@ -1,0 +1,62 @@
+;;===================================================================================================================
+;; 16bcfs.arch: Assembler architecture definition for the 16-Bit Computer From Scratch
+;;
+;;      Date     Tracker  Version  Description
+;;  -----------  -------  -------  ---------------------------------------------------------------------------------
+;;  2023-Feb-03  Initial  v0.0.1   Initial Version
+;;===================================================================================================================
+
+
+;;
+;; -- Some global definitions about the overall architecture
+;;    ------------------------------------------------------
+.organization   16bits
+.little-endian  ;; note the 16bit organization is "big endian bit order", just like a single byte would be
+
+
+;;
+;; -- Memory organization and output
+;;    ------------------------------
+.memory         0x0000  0x7fff  ROM
+.memory         0x8000  0xffff  RAM
+
+
+;;
+;; -- TODO: Tell the assembler how to write the target output
+''    -------------------------------------------------------
+;;.output         "eeprom-msb.bin"    ROM[15:8]
+;;.output         "eeprom-lsb.bin"    ROM[7:0]
+
+
+
+;;
+;; == The opodes recognized by this assembler
+;;    =======================================
+
+
+;;
+;; -- NOP
+;;    ---
+.opcode         nop         .db  00 00
+.opcode         nop-al      .db  00 00
+.opcode         nop-nv      .db  10 00
+.opcode         nop-eq      .db  20 00
+.opcode         nop-ne      .db  30 00
+.opcode         nop-cs      .db  40 00
+.opcode         nop-cc      .db  50 00
+.opcode         nop-mi      .db  60 00
+.opcode         nop-pl      .db  70 00
+.opcode         nop-vs      .db  80 00
+.opcode         nop-vc      .db  90 00
+.opcode         nop-hi      .db  a0 00
+.opcode         nop-ls      .db  b0 00
+.opcode         nop-ge      .db  c0 00
+.opcode         nop-lt      .db  d0 00
+.opcode         nop-gt      .db  e0 00
+.opcode         nop-le      .db  f0 00
+
+
+
+
+
+
