@@ -446,7 +446,7 @@ void SplitOutput(void)
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < 64 * 1024; i ++) {
+    for (int i = 0; i < 32 * 1024; i ++) {
         uint8_t lsb;
         uint8_t msb;
 
