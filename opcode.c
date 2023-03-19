@@ -53,9 +53,15 @@ void AddOpcode(char *def, char *bytes)
             opcodeList[i].byteStream = bytes;
 
             uint16_t idx = 0;
-            for (int j = 0; j < strlen(bytes); j ++) {
-                if (bytes[j] == ' ') continue;
+            int j;
+
+            for (j = 0; j < strlen(bytes); j ++) {
+                if (bytes[j] == ' ') break;
                 idx = (idx << 4) + hex2int(bytes[j]);
+            }
+
+            if (j != organization / 4) {
+                Error("Machine Code does not match organization size", sourceFile, yylineno, 0, 0);
             }
 
             if (opTable16[idx] == 0) opTable16[idx] = def;

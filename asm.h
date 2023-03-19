@@ -73,6 +73,7 @@ enum {
     TOK_ARCH_ORGANIZATION = 271,
     TOK_ARCH_BIG_ENDIAN = 272,
     TOK_ARCH_LITTLE_ENDIAN = 273,
+    TOK_OPCODE_MC = 274,
 };
 
 
@@ -147,6 +148,8 @@ void DumpOpcodes(void);
 //
 // -- Keep track of the assembled binary (See binary.c)
 //    -------------------------------------------------
+extern int organization;
+
 void BinaryInit(void);
 void SetBigEndian(void);
 void SetLittleEndian(void);

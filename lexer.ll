@@ -214,6 +214,7 @@ BIN             [01]
 <architecture>^\.little-endian      { return TOK_ARCH_LITTLE_ENDIAN; }
 
 <architecture>\.db                  { yy_push_state(db); return TOK_OPCODE_DB; }
+<architecture>\.mc                  { yy_push_state(db); return TOK_OPCODE_MC; }
 
 <architecture>.                     {
                                         yylval.errorMsg = "Unexpected character in .architecture definition file";
@@ -222,7 +223,7 @@ BIN             [01]
 
 
 <opcode>{WS}                        { }
-<opcode>[^. \t\n]+                  {
+<opcode>[^.\n]+                     {
                                         yylval.name = strdup(yytext);
                                         yy_pop_state();
                                         return TOK_OPCODE_DEF;

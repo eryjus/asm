@@ -15,6 +15,12 @@
 
 
 ;;
+;; -- Define the registers for this arch
+;;    ----------------------------------
+.register       r1      16          ; R1 Register
+
+
+;;
 ;; -- Memory organization and output
 ;;    ------------------------------
 .memory         0x0000  0x7fff  ROM
@@ -37,26 +43,45 @@
 ;;
 ;; -- NOP
 ;;    ---
-.opcode         nop         .db  00 00
-.opcode         nop-al      .db  00 00
-.opcode         nop-nv      .db  10 00
-.opcode         nop-eq      .db  20 00
-.opcode         nop-ne      .db  30 00
-.opcode         nop-cs      .db  40 00
-.opcode         nop-cc      .db  50 00
-.opcode         nop-mi      .db  60 00
-.opcode         nop-pl      .db  70 00
-.opcode         nop-vs      .db  80 00
-.opcode         nop-vc      .db  90 00
-.opcode         nop-hi      .db  a0 00
-.opcode         nop-ls      .db  b0 00
-.opcode         nop-ge      .db  c0 00
-.opcode         nop-lt      .db  d0 00
-.opcode         nop-gt      .db  e0 00
-.opcode         nop-le      .db  f0 00
+.opcode         nop                 .mc  0000
+.opcode         nop-al              .mc  0000
+.opcode         nop-nv              .mc  1000
+.opcode         nop-eq              .mc  2000
+.opcode         nop-ne              .mc  3000
+.opcode         nop-cs              .mc  4000
+.opcode         nop-cc              .mc  5000
+.opcode         nop-mi              .mc  6000
+.opcode         nop-pl              .mc  7000
+.opcode         nop-vs              .mc  8000
+.opcode         nop-vc              .mc  9000
+.opcode         nop-hi              .mc  a000
+.opcode         nop-ls              .mc  b000
+.opcode         nop-ge              .mc  c000
+.opcode         nop-lt              .mc  d000
+.opcode         nop-gt              .mc  e000
+.opcode         nop-le              .mc  f000
 
 
-
+;;
+;; -- MOV R1,<immed-16>
+;;    -----------------
+.opcode         mov    r1,$(16)     .mc 0013 %
+.opcode         mov-al r1,$(16)     .mc 0013 %
+.opcode         mov-nv r1,$(16)     .mc 1013 %
+.opcode         mov-eq r1,$(16)     .mc 2013 %
+.opcode         mov-ne r1,$(16)     .mc 3013 %
+.opcode         mov-cs r1,$(16)     .mc 4013 %
+.opcode         mov-cc r1,$(16)     .mc 5013 %
+.opcode         mov-mi r1,$(16)     .mc 6013 %
+.opcode         mov-pl r1,$(16)     .mc 7013 %
+.opcode         mov-vs r1,$(16)     .mc 8013 %
+.opcode         mov-vc r1,$(16)     .mc 9013 %
+.opcode         mov-hi r1,$(16)     .mc a013 %
+.opcode         mov-ls r1,$(16)     .mc b013 %
+.opcode         mov-ge r1,$(16)     .mc c013 %
+.opcode         mov-lt r1,$(16)     .mc d013 %
+.opcode         mov-gt r1,$(16)     .mc e013 %
+.opcode         mov-le r1,$(16)     .mc f013 %
 
 
 

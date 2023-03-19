@@ -218,8 +218,17 @@ char *StandardizeByteStream(void)
     // -- now move in each byte with 1 space in between
     while (*ch) {
         while (*ch != ' ' && *ch != '\t') {
-            if (*ch == 0) return rv;
+            if (*ch == 0) goto exit;
             *out ++ = *ch ++;
+        }
+
+        // -- if we are inserting a constant, wrap it up and return
+        if (*ch == '$' || *ch == '%') {
+            while (*ch && *ch != ' ' && *ch != '\t') {
+                *out ++ = *ch ++;
+            }
+
+            goto exit;
         }
 
         while (*ch == ' ' || *ch == '\t') ch ++;
@@ -230,6 +239,7 @@ char *StandardizeByteStream(void)
     // -- back out the final space
     *(-- out) = 0;
 
+exit:
     return rv;
 }
 
@@ -242,10 +252,14 @@ void ParseOpcodeDef(void)
     char *defn = StandardizeOpcodeDef();
     ADVANCE_TOKEN;
 
-    if(!MATCH(TOK_OPCODE_DB)) {
+    if(!MATCH(TOK_OPCODE_MC) && !MATCH(TOK_OPCODE_DB)) {
         Error("Opcode definition requires a byte stream to emit", sourceFile, yylineno, 0, 0);
         RECOVERY;
         return;
+    }
+
+    if (MATCH(TOK_OPCODE_DB)) {
+        Warning(".db in .opcode definition is deprecated.  .mc is assumed and .db will be removed in the future.", sourceFile, yylineno, 0, 0);
     }
 
     ADVANCE_TOKEN;
@@ -261,8 +275,6 @@ void ParseOpcodeDef(void)
 //    --------------------
 void ParseOrganization(void)
 {
-    extern int organization;
-
     if (!MATCH(TOK_ARCH_NUMBER))
     {
         Error("Expected a number in `.organization` directive", sourceFile, yylineno, 0, 0);
@@ -450,8 +462,8 @@ void SplitOutput(void)
         uint8_t lsb;
         uint8_t msb;
 
+        fread(&msb, 1, 1, in);      // -- this is in little endian order
         fread(&lsb, 1, 1, in);
-        fread(&msb, 1, 1, in);
 
         fwrite(&lsb, 1, 1, out1);
         fwrite(&msb, 1, 1, out2);

@@ -43,7 +43,7 @@ enum {
 // -- Some global variables for managing the resulting assembled binary
 //    -----------------------------------------------------------------
 uint64_t location = 0;
-uint64_t organization = 8;
+int organization = 8;
 int endian = LITTLE;
 
 int binaryInitialized = 0;
@@ -162,19 +162,38 @@ void EmitInstruction(char *stream, uint64_t optionalArg)
     }
 
     for (int i = 0; i < strlen(stream); i ++) {
+        if (stream[i] == ' ') continue;
+
         if (stream[i] == '$' || stream[i + 1] == '(') {
             // -- handle the optional argument here
             i += 2;
 
             if (stream[i] == '8' && stream[i + 1] == ')') {
-                EmitByte((uint8_t)(optionalArg & 0xff));
+                if (organization == 16) {
+                    EmitByte(0);
+                    EmitByte((uint8_t)(optionalArg & 0xff));
+                } else {
+                    EmitByte((uint8_t)(optionalArg & 0xff));
+                }
+    
                 i += 2;
                 continue;
             }
 
             if (stream[i] == '1' && stream[i + 1] == '6' && stream[i + 2] == ')') {
-                EmitByte((uint8_t)(optionalArg & 0xff));
-                EmitByte((uint8_t)((optionalArg >> 8) & 0xff));
+                if (organization == 16) {
+                    EmitByte((uint8_t)((optionalArg >> 8) & 0xff));
+                    EmitByte((uint8_t)(optionalArg & 0xff));
+                } else if (organization == 8) {
+                    if (endian == LITTLE) {
+                        EmitByte((uint8_t)(optionalArg & 0xff));
+                        EmitByte((uint8_t)((optionalArg >> 8) & 0xff));
+                    } else {
+                        EmitByte((uint8_t)((optionalArg >> 8) & 0xff));
+                        EmitByte((uint8_t)(optionalArg & 0xff));
+                    }
+                }
+
                 i += 3;
                 continue;
             }
@@ -183,29 +202,45 @@ void EmitInstruction(char *stream, uint64_t optionalArg)
             return;
         }
 
+        if (stream[i] == '%') {
+            if (organization == 8) {
+                EmitByte((uint8_t)(optionalArg & 0xff));
+            } else if (organization == 16) {
+                EmitByte((uint8_t)((optionalArg >> 8) & 0xff));
+                EmitByte((uint8_t)(optionalArg & 0xff));
+            }
+
+            i ++;
+            continue;
+        }
+
 
         uint8_t b = 0;
+        int j;
 
-        for (int j = 0; j < 2; j ++) {
-            if (stream[i + j] >= 'a' && stream[i + j] <= 'z') {
+        for (j = 0; j < (organization / 4); j ++) {
+            if (!((stream[i + j] >= 'a' && stream[i + j] <= 'f') || (stream[i + j] >= '0' && stream[i + j] <= '9'))) {
+                Error("Incorrect hex characcter in byte stream output", 0, 0, 0, 0);
+            }
+
+            if (stream[i + j] >= 'a' && stream[i + j] <= 'f') {
                 b = (b * 16) + stream[i + j] - 'a' + 10;
-                continue;
             }
 
             if (stream[i + j] >= '0' && stream[i + j] <= '9') {
                 b = (b * 16) + stream[i + j] - '0';
-                continue;
             }
 
-            Error("Incorrect 2-character hex in byte stream output", 0, 0, 0, 0);
+            if (j & 1) {
+                EmitByte(b);
+                b = 0;
+            }
         }
 
-        EmitByte(b);
-
-        i += 2;
+        i += j;
 
         if (stream[i] != ' ' && stream[i] != 0) {
-            Error("Byte Stream 2-character hex too long", 0, 0, 0, 0);
+            Error("Byte Stream too long for organization size", 0, 0, 0, 0);
         }
     }
 }
@@ -283,10 +318,13 @@ char *Binary16Bit(uint8_t byte1, uint8_t byte2) {
 // -- Given a 16-bit machine instruction, go find its human readable form
 //    -------------------------------------------------------------------
 char *GetOpCode16(uint8_t byte1, uint8_t byte2) {
+    char *rv;
+    
     if (organization == 8) {
         return "";
     } else if (organization == 16) {
-        return opTable16[(byte1 << 8) | byte2];
+        rv = opTable16[(byte1 << 8) | byte2];
+        return (rv?rv:"");
     }
     return "";
 }
