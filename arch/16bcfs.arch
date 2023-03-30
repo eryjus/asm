@@ -85,3 +85,24 @@
 
 
 
+
+;;
+;; -- JMP <immed-16>
+;;    --------------
+.opcode         jmp    $(16)     .mc 0ff3 %
+.opcode         jmp-al $(16)     .mc 0ff3 %
+.opcode         jmp-nv $(16)     .mc 1ff3 %
+.opcode         jmp-eq $(16)     .mc 2ff3 %
+.opcode         jmp-ne $(16)     .mc 3ff3 %
+.opcode         jmp-cs $(16)     .mc 4ff3 %
+.opcode         jmp-cc $(16)     .mc 5ff3 %
+.opcode         jmp-mi $(16)     .mc 6ff3 %
+.opcode         jmp-pl $(16)     .mc 7ff3 %
+.opcode         jmp-vs $(16)     .mc 8ff3 %
+.opcode         jmp-vc $(16)     .mc 9ff3 %
+.opcode         jmp-hi $(16)     .mc aff3 %
+.opcode         jmp-ls $(16)     .mc bff3 %
+.opcode         jmp-ge $(16)     .mc cff3 %
+.opcode         jmp-lt $(16)     .mc dff3 %
+.opcode         jmp-gt $(16)     .mc eff3 %
+.opcode         jmp-le $(16)     .mc fff3 %
