@@ -336,6 +336,7 @@ char *GetOpCode16(uint8_t byte1, uint8_t byte2) {
 void OutputListing(void)
 {
     extern FILE *listingFile;
+    int disasmSuppress = 0;
 
     if (!listingFile) return;
 
@@ -344,9 +345,17 @@ void OutputListing(void)
 
         } else if (organization == 16) {
             PrintLocationLabels(listingFile, i / 2);
-            fprintf(listingFile, "%04.4x: %02.2x%02.2x (%-19.19s):", i, bin[i], bin[i + 1],
+            fprintf(listingFile, "%04.4x: %02.2x%02.2x (%-19.19s)", i, bin[i], bin[i + 1],
                         Binary16Bit(bin[i], bin[i + 1]));
-            fprintf(listingFile, "   %s\n", GetOpCode16(bin[i], bin[i + 1]));
+            
+            if (disasmSuppress) {
+                fprintf(listingFile, "\n");
+                disasmSuppress = 0;
+            } else {
+                char *disasm = GetOpCode16(bin[i], bin[i + 1]);
+                fprintf(listingFile, ":   %s\n", disasm);
+                disasmSuppress = (strchr(disasm, '$') != 0);
+            }
         }
     }
 }
