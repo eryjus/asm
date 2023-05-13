@@ -89,20 +89,92 @@
 ;;
 ;; -- JMP <immed-16>
 ;;    --------------
-.opcode         jmp    $(16)     .mc 0ff3 %
-.opcode         jmp-al $(16)     .mc 0ff3 %
-.opcode         jmp-nv $(16)     .mc 1ff3 %
-.opcode         jmp-eq $(16)     .mc 2ff3 %
-.opcode         jmp-ne $(16)     .mc 3ff3 %
-.opcode         jmp-cs $(16)     .mc 4ff3 %
-.opcode         jmp-cc $(16)     .mc 5ff3 %
-.opcode         jmp-mi $(16)     .mc 6ff3 %
-.opcode         jmp-pl $(16)     .mc 7ff3 %
-.opcode         jmp-vs $(16)     .mc 8ff3 %
-.opcode         jmp-vc $(16)     .mc 9ff3 %
-.opcode         jmp-hi $(16)     .mc aff3 %
-.opcode         jmp-ls $(16)     .mc bff3 %
-.opcode         jmp-ge $(16)     .mc cff3 %
-.opcode         jmp-lt $(16)     .mc dff3 %
-.opcode         jmp-gt $(16)     .mc eff3 %
-.opcode         jmp-le $(16)     .mc fff3 %
+.opcode         jmp    $(16)    .mc 0ff3 %
+.opcode         jmp-al $(16)    .mc 0ff3 %
+.opcode         jmp-nv $(16)    .mc 1ff3 %
+.opcode         jmp-eq $(16)    .mc 2ff3 %
+.opcode         jmp-ne $(16)    .mc 3ff3 %
+.opcode         jmp-cs $(16)    .mc 4ff3 %
+.opcode         jmp-cc $(16)    .mc 5ff3 %
+.opcode         jmp-mi $(16)    .mc 6ff3 %
+.opcode         jmp-pl $(16)    .mc 7ff3 %
+.opcode         jmp-vs $(16)    .mc 8ff3 %
+.opcode         jmp-vc $(16)    .mc 9ff3 %
+.opcode         jmp-hi $(16)    .mc aff3 %
+.opcode         jmp-ls $(16)    .mc bff3 %
+.opcode         jmp-ge $(16)    .mc cff3 %
+.opcode         jmp-lt $(16)    .mc dff3 %
+.opcode         jmp-gt $(16)    .mc eff3 %
+.opcode         jmp-le $(16)    .mc fff3 %
+
+
+;;
+;; -- CLC
+;;    ---
+.opcode         clc             .mc 0020
+.opcode         clc-al          .mc 0020
+.opcode         clc-nv          .mc 1020
+.opcode         clc-eq          .mc 2020
+.opcode         clc-ne          .mc 3020
+.opcode         clc-cs          .mc 4020
+.opcode         clc-cc          .mc 5020
+.opcode         clc-mi          .mc 6020
+.opcode         clc-pl          .mc 7020
+.opcode         clc-vs          .mc 8020
+.opcode         clc-vc          .mc 9020
+.opcode         clc-hi          .mc a020
+.opcode         clc-ls          .mc b020
+.opcode         clc-ge          .mc c020
+.opcode         clc-lt          .mc d020
+.opcode         clc-gt          .mc e020
+.opcode         clc-le          .mc f020
+
+
+
+;;
+;; -- STC
+;;    ---
+.opcode         stc             .mc 0030
+.opcode         stc-al          .mc 0030
+.opcode         stc-nv          .mc 1030
+.opcode         stc-eq          .mc 2030
+.opcode         stc-ne          .mc 3030
+.opcode         stc-cs          .mc 4030
+.opcode         stc-cc          .mc 5030
+.opcode         stc-mi          .mc 6030
+.opcode         stc-pl          .mc 7030
+.opcode         stc-vs          .mc 8030
+.opcode         stc-vc          .mc 9030
+.opcode         stc-hi          .mc a030
+.opcode         stc-ls          .mc b030
+.opcode         stc-ge          .mc c030
+.opcode         stc-lt          .mc d030
+.opcode         stc-gt          .mc e030
+.opcode         stc-le          .mc f030
+
+
+
+;;
+;; -- MOV R1,PC (Testing!)
+;;    --------------------
+.opcode         mov    r1,pc     .mc 004f
+.opcode         mov-al r1,pc     .mc 004f
+.opcode         mov-nv r1,pc     .mc 104f
+.opcode         mov-eq r1,pc     .mc 204f
+.opcode         mov-ne r1,pc     .mc 304f
+.opcode         mov-cs r1,pc     .mc 404f
+.opcode         mov-cc r1,pc     .mc 504f
+.opcode         mov-mi r1,pc     .mc 604f
+.opcode         mov-pl r1,pc     .mc 704f
+.opcode         mov-vs r1,pc     .mc 804f
+.opcode         mov-vc r1,pc     .mc 904f
+.opcode         mov-hi r1,pc     .mc a04f
+.opcode         mov-ls r1,pc     .mc b04f
+.opcode         mov-ge r1,pc     .mc c04f
+.opcode         mov-lt r1,pc     .mc d04f
+.opcode         mov-gt r1,pc     .mc e04f
+.opcode         mov-le r1,pc     .mc f04f
+
+
+
+
