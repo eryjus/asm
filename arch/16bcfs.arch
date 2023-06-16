@@ -155,26 +155,68 @@
 
 
 ;;
-;; -- MOV R1,PC (Testing!)
-;;    --------------------
-.opcode         mov    r1,pc     .mc 004f
-.opcode         mov-al r1,pc     .mc 004f
-.opcode         mov-nv r1,pc     .mc 104f
-.opcode         mov-eq r1,pc     .mc 204f
-.opcode         mov-ne r1,pc     .mc 304f
-.opcode         mov-cs r1,pc     .mc 404f
-.opcode         mov-cc r1,pc     .mc 504f
-.opcode         mov-mi r1,pc     .mc 604f
-.opcode         mov-pl r1,pc     .mc 704f
-.opcode         mov-vs r1,pc     .mc 804f
-.opcode         mov-vc r1,pc     .mc 904f
-.opcode         mov-hi r1,pc     .mc a04f
-.opcode         mov-ls r1,pc     .mc b04f
-.opcode         mov-ge r1,pc     .mc c04f
-.opcode         mov-lt r1,pc     .mc d04f
-.opcode         mov-gt r1,pc     .mc e04f
-.opcode         mov-le r1,pc     .mc f04f
+;; -- DECR
+;;    ----
+.opcode         decr    r1      .mc 0040
+.opcode         decr-al r1      .mc 0040
+.opcode         decr-nv r1      .mc 1040
+.opcode         decr-eq r1      .mc 2040
+.opcode         decr-ne r1      .mc 3040
+.opcode         decr-cs r1      .mc 4040
+.opcode         decr-cc r1      .mc 5040
+.opcode         decr-mi r1      .mc 6040
+.opcode         decr-pl r1      .mc 7040
+.opcode         decr-vs r1      .mc 8040
+.opcode         decr-vc r1      .mc 9040
+.opcode         decr-hi r1      .mc a040
+.opcode         decr-ls r1      .mc b040
+.opcode         decr-ge r1      .mc c040
+.opcode         decr-lt r1      .mc d040
+.opcode         decr-gt r1      .mc e040
+.opcode         decr-le r1      .mc f040
 
 
+;;
+;; -- INCR
+;;    ----
+.opcode         incr    r1      .mc 0050
+.opcode         incr-al r1      .mc 0050
+.opcode         incr-nv r1      .mc 1050
+.opcode         incr-eq r1      .mc 2050
+.opcode         incr-ne r1      .mc 3050
+.opcode         incr-cs r1      .mc 4050
+.opcode         incr-cc r1      .mc 5050
+.opcode         incr-mi r1      .mc 6050
+.opcode         incr-pl r1      .mc 7050
+.opcode         incr-vs r1      .mc 8050
+.opcode         incr-vc r1      .mc 9050
+.opcode         incr-hi r1      .mc a050
+.opcode         incr-ls r1      .mc b050
+.opcode         incr-ge r1      .mc c050
+.opcode         incr-lt r1      .mc d050
+.opcode         incr-gt r1      .mc e050
+.opcode         incr-le r1      .mc f050
+
+
+;;
+;; -- JMP R1
+;;    ------
+.opcode         jmp    r1       .mc 0060
+.opcode         jmp-al r1       .mc 0060
+.opcode         jmp-nv r1       .mc 1060
+.opcode         jmp-eq r1       .mc 2060
+.opcode         jmp-ne r1       .mc 3060
+.opcode         jmp-cs r1       .mc 4060
+.opcode         jmp-cc r1       .mc 5060
+.opcode         jmp-mi r1       .mc 6060
+.opcode         jmp-pl r1       .mc 7060
+.opcode         jmp-vs r1       .mc 8060
+.opcode         jmp-vc r1       .mc 9060
+.opcode         jmp-hi r1       .mc a060
+.opcode         jmp-ls r1       .mc b060
+.opcode         jmp-ge r1       .mc c060
+.opcode         jmp-lt r1       .mc d060
+.opcode         jmp-gt r1       .mc e060
+.opcode         jmp-le r1       .mc f060
 
 
