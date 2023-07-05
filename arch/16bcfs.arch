@@ -1,9 +1,34 @@
 ;;===================================================================================================================
 ;; 16bcfs.arch: Assembler architecture definition for the 16-Bit Computer From Scratch
 ;;
+;;  .organization -- this is the fundamental size of the instruction set and the underlying architecture.  It
+;;  identifies the lowest level of operation which can take place.
+;;
+;;  .little-endian
+;;  .big-endian -- larger than the `.organization` size, what endianness are the structures organized.
+;;
+;;  .cond-bits -- the number of bits used to specify any conditional execution.  When no `.cond-xxx` option is
+;;  specified, conditional execution is not supported.  Every instruction will have these bits prepended to the
+;;  bit image for the instruction.  Note that this is a limitation of this assembler: the condition bits are
+;;  in the high-order bits.
+;;
+;;  .cond-default -- specifies the condition which is used when no condition is offered for the instruction, as in
+;;  the condition bits for execute always.
+;;
+;;  .cond-prefix -- the characters which are prefixed onto an instruction in order to optionally condition it,
+;;  followed by the bits which are used to specify the condition.
+;;
+;;  .cond-suffix -- the characters which are appended to an instruction in order to optionally condition it,
+;;  followed by the bits which are used to specify the condition.
+;;
+;;  .register -- defines a register and its size in bits.
+;;
+;;  ----------------------------------------------------------------------------------------------------------------
+;;
 ;;      Date     Tracker  Version  Description
 ;;  -----------  -------  -------  ---------------------------------------------------------------------------------
 ;;  2023-Feb-03  Initial  v0.0.1   Initial Version
+;;  2023-Jun-26  Initial  v0.0.7   Reorganize the instruction set before it get out of control
 ;;===================================================================================================================
 
 
@@ -15,9 +40,34 @@
 
 
 ;;
+;; -- These are the conditions that can be added to an instruction for conditional execution
+;;    --------------------------------------------------------------------------------------
+.cond-bits      4
+.cond-default   0x0
+.cond-suffix    -al     0x0
+.cond-suffix    -nv     0x1
+.cond-suffix    -eq     0x2
+.cond-suffix    -ne     0x3
+.cond-suffix    -cs     0x4
+.cond-suffix    -cc     0x5
+.cond-suffix    -mi     0x6
+.cond-suffix    -pl     0x7
+.cond-suffix    -vs     0x8
+.cond-suffix    -vc     0x9
+.cond-suffix    -hi     0xa
+.cond-suffix    -ls     0xb
+.cond-suffix    -ge     0xc
+.cond-suffix    -lt     0xd
+.cond-suffix    -gt     0xe
+.cond-suffix    -le     0xf
+
+
+;;
 ;; -- Define the registers for this arch
 ;;    ----------------------------------
+;.register       rz      16          ; The "Zero" register (read-only value of 0)
 .register       r1      16          ; R1 Register
+.register       r2      16          ; R2 Register
 
 
 ;;
@@ -30,193 +80,125 @@
 ;;
 ;; -- TODO: Tell the assembler how to write the target output
 ;;    -------------------------------------------------------
-;;.output         "eeprom-msb.bin"    ROM[15:8]
-;;.output         "eeprom-lsb.bin"    ROM[7:0]
+;.output         "eeprom-msb.bin"    ROM[15:8]
+;.output         "eeprom-lsb.bin"    ROM[7:0]
 
 
 
 ;;
 ;; == The opodes recognized by this assembler
 ;;    =======================================
+.opcode         nop                     .mc  000                ;; -- this is the only instruction which is hard wired
+.opcode         mov     r1,$(16)        .mc  001 %
+.opcode         mov     r2,$(16)        .mc  002 %
+;.opcode         mov     r3,$(16)        .mc  003 %
+;.opcode         mov     r4,$(16)        .mc  004 %
+;.opcode         mov     r5,$(16)        .mc  005 %
+;.opcode         mov     r6,$(16)        .mc  006 %
+;.opcode         mov     r7,$(16)        .mc  007 %
+;.opcode         mov     r8,$(16)        .mc  008 %
+;.opcode         mov     r9,$(16)        .mc  009 %
+;.opcode         mov     r10,$(16)       .mc  00a %
+;.opcode         mov     r11,$(16)       .mc  00b %
+;.opcode         mov     r12,$(16)       .mc  00c %
+;.opcode         mov     sp,$(16)        .mc  00d %
+;.opcode                                 .mc  00e
+;.opcode                                 .mc  00f
+
+;;
+;; ==================================================================
+;;
+
+;.opcode                                 .mc  010
+;.opcode         mov     r1,rz           .mc  011
+;.opcode         mov     r2,rz           .mc  012
+;.opcode         mov     r3,rz           .mc  013
+;.opcode         mov     r4,rz           .mc  014
+;.opcode         mov     r5,rz           .mc  015
+;.opcode         mov     r6,rz           .mc  016
+;.opcode         mov     r7,rz           .mc  017
+;.opcode         mov     r8,rz           .mc  018
+;.opcode         mov     r9,rz           .mc  019
+;.opcode         mov     r10,rz          .mc  01a
+;.opcode         mov     r11,rz          .mc  01b
+;.opcode         mov     r12,rz          .mc  01c
+;.opcode         mov     sp,rz           .mc  01d
+;.opcode                                 .mc  01e
+;.opcode                                 .mc  01f
+
+;;
+;; ==================================================================
+;;
+
+;.opcode                                 .mc  020
+;.opcode                                 .mc  021
+.opcode         mov     r2,r1           .mc  022
+;.opcode         mov     r3,r1           .mc  023
+;.opcode         mov     r4,r1           .mc  024
+;.opcode         mov     r5,r1           .mc  025
+;.opcode         mov     r6,r1           .mc  026
+;.opcode         mov     r7,r1           .mc  027
+;.opcode         mov     r8,r1           .mc  028
+;.opcode         mov     r9,r1           .mc  029
+;.opcode         mov     r10,r1          .mc  02a
+;.opcode         mov     r11,r1          .mc  02b
+;.opcode         mov     r12,r1          .mc  02c
+;.opcode                                 .mc  02d
+;.opcode                                 .mc  02e
+;.opcode                                 .mc  02f
+
+;;
+;; ==================================================================
+;;
+
+;.opcode                                 .mc  030
+.opcode         mov     r1,r2           .mc  031
+;.opcode                                 .mc  032
+;.opcode         mov     r3,r2           .mc  033
+;.opcode         mov     r4,r2           .mc  034
+;.opcode         mov     r5,r2           .mc  035
+;.opcode         mov     r6,r2           .mc  036
+;.opcode         mov     r7,r2           .mc  037
+;.opcode         mov     r8,r2           .mc  038
+;.opcode         mov     r9,r2           .mc  039
+;.opcode         mov     r10,r2          .mc  03a
+;.opcode         mov     r11,r2          .mc  03b
+;.opcode         mov     r12,r2          .mc  03c
+;.opcode                                 .mc  03d
+;.opcode                                 .mc  03e
+;.opcode                                 .mc  03f
+
+;;
+;; ==================================================================
+;;
+
+.opcode         jmp     $(16)           .mc 0f0 %
+.opcode         jmp     r1              .mc 0f1
+.opcode         jmp     r2              .mc 0f2
+;.opcode         jmp     r3              .mc 0f3
+;.opcode         jmp     r4              .mc 0f4
+;.opcode         jmp     r5              .mc 0f5
+;.opcode         jmp     r6              .mc 0f6
+;.opcode         jmp     r7              .mc 0f7
+;.opcode         jmp     r8              .mc 0f8
+;.opcode         jmp     r9              .mc 0f9
+;.opcode         jmp     r10             .mc 0fa
+;.opcode         jmp     r11             .mc 0fb
+;.opcode         jmp     r12             .mc 0fc
+;.opcode         jmp     ra              .mc 0fd
+;.opcode                                 .mc  0fe
+;.opcode                                 .mc  0ff
+
+;;
+;; ==================================================================
+;;
 
 
 ;;
-;; -- NOP
-;;    ---
-.opcode         nop                 .mc  0000
-.opcode         nop-al              .mc  0000
-.opcode         nop-nv              .mc  1000
-.opcode         nop-eq              .mc  2000
-.opcode         nop-ne              .mc  3000
-.opcode         nop-cs              .mc  4000
-.opcode         nop-cc              .mc  5000
-.opcode         nop-mi              .mc  6000
-.opcode         nop-pl              .mc  7000
-.opcode         nop-vs              .mc  8000
-.opcode         nop-vc              .mc  9000
-.opcode         nop-hi              .mc  a000
-.opcode         nop-ls              .mc  b000
-.opcode         nop-ge              .mc  c000
-.opcode         nop-lt              .mc  d000
-.opcode         nop-gt              .mc  e000
-.opcode         nop-le              .mc  f000
-
-
-;;
-;; -- MOV R1,<immed-16>
-;;    -----------------
-.opcode         mov    r1,$(16)     .mc 0013 %
-.opcode         mov-al r1,$(16)     .mc 0013 %
-.opcode         mov-nv r1,$(16)     .mc 1013 %
-.opcode         mov-eq r1,$(16)     .mc 2013 %
-.opcode         mov-ne r1,$(16)     .mc 3013 %
-.opcode         mov-cs r1,$(16)     .mc 4013 %
-.opcode         mov-cc r1,$(16)     .mc 5013 %
-.opcode         mov-mi r1,$(16)     .mc 6013 %
-.opcode         mov-pl r1,$(16)     .mc 7013 %
-.opcode         mov-vs r1,$(16)     .mc 8013 %
-.opcode         mov-vc r1,$(16)     .mc 9013 %
-.opcode         mov-hi r1,$(16)     .mc a013 %
-.opcode         mov-ls r1,$(16)     .mc b013 %
-.opcode         mov-ge r1,$(16)     .mc c013 %
-.opcode         mov-lt r1,$(16)     .mc d013 %
-.opcode         mov-gt r1,$(16)     .mc e013 %
-.opcode         mov-le r1,$(16)     .mc f013 %
-
-
-
-
-;;
-;; -- JMP <immed-16>
-;;    --------------
-.opcode         jmp    $(16)    .mc 0ff3 %
-.opcode         jmp-al $(16)    .mc 0ff3 %
-.opcode         jmp-nv $(16)    .mc 1ff3 %
-.opcode         jmp-eq $(16)    .mc 2ff3 %
-.opcode         jmp-ne $(16)    .mc 3ff3 %
-.opcode         jmp-cs $(16)    .mc 4ff3 %
-.opcode         jmp-cc $(16)    .mc 5ff3 %
-.opcode         jmp-mi $(16)    .mc 6ff3 %
-.opcode         jmp-pl $(16)    .mc 7ff3 %
-.opcode         jmp-vs $(16)    .mc 8ff3 %
-.opcode         jmp-vc $(16)    .mc 9ff3 %
-.opcode         jmp-hi $(16)    .mc aff3 %
-.opcode         jmp-ls $(16)    .mc bff3 %
-.opcode         jmp-ge $(16)    .mc cff3 %
-.opcode         jmp-lt $(16)    .mc dff3 %
-.opcode         jmp-gt $(16)    .mc eff3 %
-.opcode         jmp-le $(16)    .mc fff3 %
-
-
-;;
-;; -- CLC
-;;    ---
-.opcode         clc             .mc 0020
-.opcode         clc-al          .mc 0020
-.opcode         clc-nv          .mc 1020
-.opcode         clc-eq          .mc 2020
-.opcode         clc-ne          .mc 3020
-.opcode         clc-cs          .mc 4020
-.opcode         clc-cc          .mc 5020
-.opcode         clc-mi          .mc 6020
-.opcode         clc-pl          .mc 7020
-.opcode         clc-vs          .mc 8020
-.opcode         clc-vc          .mc 9020
-.opcode         clc-hi          .mc a020
-.opcode         clc-ls          .mc b020
-.opcode         clc-ge          .mc c020
-.opcode         clc-lt          .mc d020
-.opcode         clc-gt          .mc e020
-.opcode         clc-le          .mc f020
-
-
-
-;;
-;; -- STC
-;;    ---
-.opcode         stc             .mc 0030
-.opcode         stc-al          .mc 0030
-.opcode         stc-nv          .mc 1030
-.opcode         stc-eq          .mc 2030
-.opcode         stc-ne          .mc 3030
-.opcode         stc-cs          .mc 4030
-.opcode         stc-cc          .mc 5030
-.opcode         stc-mi          .mc 6030
-.opcode         stc-pl          .mc 7030
-.opcode         stc-vs          .mc 8030
-.opcode         stc-vc          .mc 9030
-.opcode         stc-hi          .mc a030
-.opcode         stc-ls          .mc b030
-.opcode         stc-ge          .mc c030
-.opcode         stc-lt          .mc d030
-.opcode         stc-gt          .mc e030
-.opcode         stc-le          .mc f030
-
-
-
-;;
-;; -- DECR
-;;    ----
-.opcode         decr    r1      .mc 0040
-.opcode         decr-al r1      .mc 0040
-.opcode         decr-nv r1      .mc 1040
-.opcode         decr-eq r1      .mc 2040
-.opcode         decr-ne r1      .mc 3040
-.opcode         decr-cs r1      .mc 4040
-.opcode         decr-cc r1      .mc 5040
-.opcode         decr-mi r1      .mc 6040
-.opcode         decr-pl r1      .mc 7040
-.opcode         decr-vs r1      .mc 8040
-.opcode         decr-vc r1      .mc 9040
-.opcode         decr-hi r1      .mc a040
-.opcode         decr-ls r1      .mc b040
-.opcode         decr-ge r1      .mc c040
-.opcode         decr-lt r1      .mc d040
-.opcode         decr-gt r1      .mc e040
-.opcode         decr-le r1      .mc f040
-
-
-;;
-;; -- INCR
-;;    ----
-.opcode         incr    r1      .mc 0050
-.opcode         incr-al r1      .mc 0050
-.opcode         incr-nv r1      .mc 1050
-.opcode         incr-eq r1      .mc 2050
-.opcode         incr-ne r1      .mc 3050
-.opcode         incr-cs r1      .mc 4050
-.opcode         incr-cc r1      .mc 5050
-.opcode         incr-mi r1      .mc 6050
-.opcode         incr-pl r1      .mc 7050
-.opcode         incr-vs r1      .mc 8050
-.opcode         incr-vc r1      .mc 9050
-.opcode         incr-hi r1      .mc a050
-.opcode         incr-ls r1      .mc b050
-.opcode         incr-ge r1      .mc c050
-.opcode         incr-lt r1      .mc d050
-.opcode         incr-gt r1      .mc e050
-.opcode         incr-le r1      .mc f050
-
-
-;;
-;; -- JMP R1
-;;    ------
-.opcode         jmp    r1       .mc 0060
-.opcode         jmp-al r1       .mc 0060
-.opcode         jmp-nv r1       .mc 1060
-.opcode         jmp-eq r1       .mc 2060
-.opcode         jmp-ne r1       .mc 3060
-.opcode         jmp-cs r1       .mc 4060
-.opcode         jmp-cc r1       .mc 5060
-.opcode         jmp-mi r1       .mc 6060
-.opcode         jmp-pl r1       .mc 7060
-.opcode         jmp-vs r1       .mc 8060
-.opcode         jmp-vc r1       .mc 9060
-.opcode         jmp-hi r1       .mc a060
-.opcode         jmp-ls r1       .mc b060
-.opcode         jmp-ge r1       .mc c060
-.opcode         jmp-lt r1       .mc d060
-.opcode         jmp-gt r1       .mc e060
-.opcode         jmp-le r1       .mc f060
-
+;; -- Some temporary opcodes or opcodes needing a new home
+;;    ----------------------------------------------------
+.opcode         decr    r1              .mc ff0
+.opcode         incr    r1              .mc ff1
+.opcode         clc                     .mc ffe
+.opcode         stc                     .mc fff
 

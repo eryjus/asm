@@ -1,15 +1,17 @@
 //===================================================================================================================
-// parser.c -- main entry point and top-down parser (hand-coded)
+// parser.cc -- main entry point and top-down parser (hand-coded)
 //
 //  This file contains a hand-coded top-down parser for all assembly files.
 //
 //      Date     Tracker  Version  Description
 //  -----------  -------  -------  ---------------------------------------------------------------------------------
 //  2023-Feb-28  Initial  v0.0.1   Initial Version
+//  2023-Jun-27  Initial  v0.0.7   Rename to C++ source
 //===================================================================================================================
 
 
 #include "asm.h"
+#include "asm.hh"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +20,7 @@
 //
 // -- scanner interface function
 //    --------------------------
-extern int yylex (void);
+extern "C" int yylex (void);
 
 
 //
@@ -68,7 +70,7 @@ int tok;
 //
 // -- Function to open a source file
 //    ------------------------------
-void OpenFile (const char *file);
+extern "C" void OpenFile (const char *file);
 
 //
 // -- The name of the source file
@@ -122,7 +124,7 @@ void ParseRegisterDef(void) {
 //    .memory from-address to-address\n
 //    ---------------------------------
 void ParseMemoryDef(void) {
-    char *n = "";
+    const char *n = "";
 
     if (!MATCH(TOK_ARCH_NUMBER)) {
         Error("Expected memory address range starting address", sourceFile, yylineno, 0, 0);
@@ -168,7 +170,7 @@ void ParseMemoryDef(void) {
 char *StandardizeOpcodeDef(void)
 {
     int len = strlen(yylval.name) + 1;
-    char *rv = malloc(len);
+    char *rv = (char *)malloc(len);
     char *ch = yylval.name;
     char *out = rv;
 
@@ -206,7 +208,7 @@ char *StandardizeOpcodeDef(void)
 char *StandardizeByteStream(void)
 {
     int len = strlen(yylval.name) + 1;
-    char *rv = malloc(len);
+    char *rv = (char *)malloc(len);
     char *ch = yylval.name;
     char *out = rv;
 
@@ -265,7 +267,12 @@ void ParseOpcodeDef(void)
     ADVANCE_TOKEN;
 
     char *bytes = StandardizeByteStream();
-    AddOpcode(defn, bytes);
+
+    AddToEnum(defn, bytes);
+
+    if (Conditionals::IsInit()) cond().AddOpcodes(defn, bytes);
+    else AddOpcode(defn, bytes);
+
     ADVANCE_TOKEN;
 }
 
@@ -327,6 +334,104 @@ void GetNewLocation(void)
     }
 
     SetPosition(yylval.number);
+    ADVANCE_TOKEN;
+}
+
+
+//
+// -- Parse the number of bits a conditional takes up
+//    -----------------------------------------------
+void ParseCondBits(void)
+{
+    if (!MATCH(TOK_ARCH_NUMBER)) {
+        Error("`.cond-bits` requires the number of bits needed to represent condition", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    cond().Bits(yylval.number);
+    ADVANCE_TOKEN;
+}
+
+
+//
+// -- Parse the default condition
+//    ---------------------------
+void ParseCondDefault(void)
+{
+    if (!MATCH(TOK_ARCH_NUMBER)) {
+        Error("`.cond-default` requires the value of the default condition", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    cond().Default(yylval.number);
+    ADVANCE_TOKEN;
+}
+
+
+//
+// -- Parse the a condition added as a prefix to the opcode
+//    -----------------------------------------------------
+void ParseCondPrefix(void)
+{
+    if (!(MATCH(TOK_ARCH_NAME) || MATCH(TOK_ARCH_NAME_PREFIX))) {
+        Error("`.cond-prefix` requires a prefix name", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    char *prefixName = yylval.name;
+    ADVANCE_TOKEN;
+
+    if (!MATCH(TOK_ARCH_NUMBER)) {
+        Error("Specify the number for the prefix", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    uint64_t prefix = yylval.number;
+
+    if (prefix >> cond().GetBits() != 0) {
+        Error("The prefix does not fit", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    cond().AddPrefix(prefixName, prefix);
+    ADVANCE_TOKEN;
+}
+
+
+//
+// -- Parse the a condition added as a suffix to the opcode
+//    -----------------------------------------------------
+void ParseCondSuffix(void)
+{
+    if (!(MATCH(TOK_ARCH_NAME) || MATCH(TOK_ARCH_NAME_SUFFIX))) {
+        Error("`.cond-suffix` requires a suffix name", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    char *suffixName = yylval.name;
+    ADVANCE_TOKEN;
+
+    if (!MATCH(TOK_ARCH_NUMBER)) {
+        Error("Specify the number for the suffix", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    uint64_t suffix = yylval.number;
+
+    if (suffix >> cond().GetBits() != 0) {
+        Error("The suffix does not fit", sourceFile, yylineno, 0, 0);
+        RECOVERY;
+        return;
+    }
+
+    cond().AddSuffix(suffixName, suffix);
     ADVANCE_TOKEN;
 }
 
@@ -436,6 +541,30 @@ void ParseFile(void)
             ADVANCE_TOKEN;
             break;
 
+        case TOK_ARCH_COND_BITS:
+            ADVANCE_TOKEN;
+            ParseCondBits();
+            ADVANCE_TOKEN;
+            break;
+
+        case TOK_ARCH_COND_DEFAULT:
+            ADVANCE_TOKEN;
+            ParseCondDefault();
+            ADVANCE_TOKEN;
+            break;
+
+        case TOK_ARCH_COND_PREFIX:
+            ADVANCE_TOKEN;
+            ParseCondPrefix();
+            ADVANCE_TOKEN;
+            break;
+
+        case TOK_ARCH_COND_SUFFIX:
+            ADVANCE_TOKEN;
+            ParseCondSuffix();
+            ADVANCE_TOKEN;
+            break;
+
         default:
             UNIMPLEMENTED;
             RECOVERY;
@@ -528,6 +657,7 @@ int main(int argc, char *argv[])
     }
 
     SplitOutput();
+    OutputEnum();
 
     return EXIT_SUCCESS;
 }

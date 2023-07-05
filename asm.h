@@ -14,6 +14,9 @@
 #include <malloc.h>
 #include <ctype.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 //
 // -- Some definitions which set the limits of the assembler
@@ -74,6 +77,12 @@ enum {
     TOK_ARCH_BIG_ENDIAN = 272,
     TOK_ARCH_LITTLE_ENDIAN = 273,
     TOK_OPCODE_MC = 274,
+    TOK_ARCH_COND_BITS = 275,
+    TOK_ARCH_COND_DEFAULT = 276,
+    TOK_ARCH_COND_SUFFIX = 277,
+    TOK_ARCH_COND_PREFIX = 278,
+    TOK_ARCH_NAME_PREFIX = 279,
+    TOK_ARCH_NAME_SUFFIX = 280,
 };
 
 
@@ -143,6 +152,8 @@ void AddOpcode(char *def, char *bytes);
 char *NormalizeInstruction(char *line);
 void ParseInstruction(char *line);
 void DumpOpcodes(void);
+void AddToEnum(char *def, char *bytes);
+void OutputEnum(void);
 
 
 //
@@ -170,3 +181,6 @@ void PrintLocationLabels(FILE *fp, uint64_t location);
 void NoteLabelLocation(void);
 void DumpLabelLocations(void);
 
+#ifdef __cplusplus
+}
+#endif

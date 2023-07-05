@@ -15,6 +15,8 @@
 /*      Date     Tracker  Version  Description                                                                     */
 /*  -----------  -------  -------  ------------------------------------------------------------------------------- */
 /*  2023-Feb-28  Initial  v0.0.1   Initial Version                                                                 */
+/*  2023-Jun-26  Initial  v0.0.7   Add support for implied conditional execution opcodes                           */
+/*                                                                                                                 */
 /*=================================================================================================================*/
 
 
@@ -176,6 +178,14 @@ BIN             [01]
                                         yylval.name = strdup(yytext);
                                         return TOK_ARCH_NAME;
                                     }
+<architecture>{LETTER}{ALPHA}*-     {
+                                        yylval.name = strdup(yytext);
+                                        return TOK_ARCH_NAME_PREFIX;
+                                    }
+<architecture>-{LETTER}{ALPHA}*     {
+                                        yylval.name = strdup(yytext);
+                                        return TOK_ARCH_NAME_SUFFIX;
+                                    }
 <architecture>0[Xx]{HEX}+           {
                                         yylval.number = HexNumber(yytext + 2);
                                         return TOK_ARCH_NUMBER;
@@ -212,6 +222,11 @@ BIN             [01]
 <architecture>^\.organization       { return TOK_ARCH_ORGANIZATION; }
 <architecture>^\.big-endian         { return TOK_ARCH_BIG_ENDIAN; }
 <architecture>^\.little-endian      { return TOK_ARCH_LITTLE_ENDIAN; }
+<architecture>^\.cond-bits          { return TOK_ARCH_COND_BITS; }
+<architecture>^\.cond-default       { return TOK_ARCH_COND_DEFAULT; }
+<architecture>^\.cond-prefix        { return TOK_ARCH_COND_PREFIX; }
+<architecture>^\.cond-suffix        { return TOK_ARCH_COND_SUFFIX; }
+
 
 <architecture>\.db                  { yy_push_state(db); return TOK_OPCODE_DB; }
 <architecture>\.mc                  { yy_push_state(db); return TOK_OPCODE_MC; }

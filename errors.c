@@ -73,6 +73,8 @@ void Fatal(const char *msg,
         fprintf(stderr, "%s\n", codeLine);
     }
 
+    fflush(stderr);
+
     exit(EXIT_FAILURE);
 }
 
@@ -124,6 +126,8 @@ void Error(const char *msg,
         fprintf(stderr, "FATAL: Too many errors\n");
         exit(EXIT_FAILURE);
     }
+
+    fflush(stderr);
 }
 
 
@@ -174,6 +178,8 @@ void Warning(const char *msg,
             fprintf(stderr, "FATAL: Too many errors\n");
         }
     } else warningCount ++;
+
+    fflush(stderr);
 }
 
 
@@ -215,6 +221,8 @@ void Info(const char *msg,
     if (codeLine) {
         fprintf(stderr, "%s\n", codeLine);
     }
+
+    fflush(stderr);
 }
 
 
@@ -256,6 +264,8 @@ void Debug(const char *msg,
     if (codeLine) {
         fprintf(stderr, "%s\n", codeLine);
     }
+
+    fflush(stderr);
 }
 
 
@@ -273,6 +283,8 @@ void Msg(const char *msg, ...)
         fprintf(stdout, "\n");
     }
     va_end(_list);
+
+    fflush(stdout);
 }
 
 
