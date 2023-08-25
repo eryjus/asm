@@ -199,6 +199,8 @@
 ;;    ----------------------------------------------------
 .opcode         decr    r1              .mc ff0
 .opcode         incr    r1              .mc ff1
+.opcode         decr    r2              .mc ff2
+.opcode         incr    r2              .mc ff3
 .opcode         clc                     .mc ffe
 .opcode         stc                     .mc fff
 
