@@ -102,8 +102,8 @@
 ;.opcode         mov     r11,$(16)       .mc  00b %
 ;.opcode         mov     r12,$(16)       .mc  00c %
 ;.opcode         mov     sp,$(16)        .mc  00d %
-;.opcode                                 .mc  00e
-;.opcode                                 .mc  00f
+.opcode          clc                    .mc  00e
+.opcode          stc                    .mc  00f
 
 ;;
 ;; ==================================================================
@@ -201,6 +201,4 @@
 .opcode         incr    r1              .mc ff1
 .opcode         decr    r2              .mc ff2
 .opcode         incr    r2              .mc ff3
-.opcode         clc                     .mc ffe
-.opcode         stc                     .mc fff
 
